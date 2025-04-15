@@ -55,7 +55,12 @@ def print_logs():
 # ✅ Nova rota para receber IP via JavaScript (fetch)
 @app.route('/log')
 def log_from_js():
-    ip = request.args.get('ip', request.remote_addr)
+    x_forwarded_for = request.headers.get('X-Forwarded-For')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.args.get('ip', request.remote_addr)
+
     user_agent = request.headers.get('User-Agent', 'Desconhecido')
     route = '/log (via JS)'
     
@@ -67,17 +72,19 @@ def log_from_js():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    ip = request.headers.get('X-Real-IP') or \
-    request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+    x_forwarded_for = request.headers.get('X-Forwarded-For')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.remote_addr
+
     user_agent = request.headers.get('User-Agent', 'Desconhecido')
     route = "/" + path
 
     log_attempt(ip, user_agent, route)
-    
-    # ✅ Aqui você visualiza o acesso em tempo real no Render
     print(f"[ACESSO] IP: {ip} | Rota: {route} | User-Agent: {user_agent}")
-    
-    return "404 - Página não encontrada", 404  # Simula página falsa
+
+    return "404 - Página não encontrada", 404
 
 if __name__ == '__main__':
     init_db()
