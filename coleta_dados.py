@@ -33,6 +33,22 @@ def log_attempt(ip, user_agent, route):
         ''', (ip, user_agent, route, timestamp))
         conn.commit()
 
+# Função para exibir os logs do banco de dados
+def print_logs():
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, ip, user_agent, route, timestamp FROM logs')
+        logs = cursor.fetchall()
+        
+        print("\n===== LOGS REGISTRADOS =====")
+        for log in logs:
+            print(f"ID: {log[0]}")
+            print(f"IP: {log[1]}")
+            print(f"User-Agent: {log[2]}")
+            print(f"Rota: {log[3]}")
+            print(f"Timestamp: {log[4]}")
+            print("-" * 30)
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
@@ -46,4 +62,6 @@ def catch_all(path):
 
 if __name__ == '__main__':
     init_db()
+    # Imprimir logs existentes ao iniciar o servidor
+    print_logs()
     app.run(host='0.0.0.0', port=8080)
