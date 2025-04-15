@@ -58,10 +58,13 @@ def catch_all(path):
 
     log_attempt(ip, user_agent, route)
     
+    # ✅ Aqui você visualiza o acesso em tempo real no Render
+    print(f"[ACESSO] IP: {ip} | Rota: {route} | User-Agent: {user_agent}")
+    
     return "404 - Página não encontrada", 404  # Simula página falsa
 
 if __name__ == '__main__':
     init_db()
-    # Imprimir logs existentes ao iniciar o servidor
+    print("[INICIANDO SERVIDOR]")
     print_logs()
     app.run(host='0.0.0.0', port=8080)
