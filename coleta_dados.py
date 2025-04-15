@@ -52,6 +52,18 @@ def print_logs():
             print(f"Timestamp: {log[4]}")
             print("-" * 30)
 
+# ✅ Nova rota para receber IP via JavaScript (fetch)
+@app.route('/log')
+def log_from_js():
+    ip = request.args.get('ip', request.remote_addr)
+    user_agent = request.headers.get('User-Agent', 'Desconhecido')
+    route = '/log (via JS)'
+    
+    log_attempt(ip, user_agent, route)
+    print(f"[JS-LOG] IP: {ip} | Rota: {route} | User-Agent: {user_agent}")
+    return "Log registrado com sucesso"
+
+# captura rotas falsas
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
