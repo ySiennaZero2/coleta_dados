@@ -2,8 +2,11 @@ from flask import Flask, request
 import sqlite3
 from datetime import datetime
 import os
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1) 
 DB_NAME = 'logs.db'
 
 # Cria o banco e a tabela se não existir
@@ -52,7 +55,7 @@ def print_logs():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+    ip = request.remote_addr
     user_agent = request.headers.get('User-Agent', 'Desconhecido')
     route = "/" + path
 
