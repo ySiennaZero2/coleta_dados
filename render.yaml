@@ -12,7 +12,7 @@ services:
     name: dashboard
     runtime: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "streamlit run dashboard.py"  # Rodando o Streamlit no serviço separado
+    startCommand: "streamlit run ./dashboard.py"  # Rodando o Streamlit no serviço separado
     envVars:
       - key: PYTHON_VERSION
         value: 3.11
